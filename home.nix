@@ -1,65 +1,97 @@
 { config, pkgs, ... }:
 
 {
-  home.username = "duktus";
-  home.homeDirectory = "/home/duktus";
+  home = {
+    username = "duktus";
+    homeDirectory = "/home/duktus";
 
-  programs.dircolors = {
-    enable = true;
-    enableBashIntegration = true;
-    enableFishIntegration = true;
+    packages = with pkgs; [
+      # pkgs to install
+      tmux
+      neovim
+      fish
+      
+      tree
+      tig
+      ripgrep
+      jq
+      fzf
+      exa
+      bat
+      fd
+      gotop
+      mc
+      podman-unwrapped
+      podman-compose
+
+      ffmpeg_5-full 
+      unzip
+      p7zip
+      python310Packages.pipx
+    ];
+
+    file = {
+      
+      tmux = {
+        source = ./tmux/tmux.conf;
+	target = ".tmux.conf";
+      };
+
+      fish = {
+        source = ./fish/config.fish;
+	target = ".config/fish/config.fish";
+      };
+
+      fish_functions = {
+	recursive = true;
+        source = ./fish/functions;
+	target = ".config/fish/functions";
+      };
+
+    };
+
+    stateVersion = "22.05";
   };
 
-  programs.direnv = {
-    enable = true;
-#    enableBashIntegration = true;
-#    enableFishIntegration = true;
-  };
+  programs = {
 
-  programs.fish = {
-    enable = true;
-    plugins = [];
-  };
+    home-manager.enable = true;
+  
+    git = {
+      enable = true;
+      userName = "duktus";
+      userEmail = "duktus@duck.com";
+      extraConfig = {
 
-  # configure git
-  programs.git = {
-    enable = true;
-    userName = "duktus";
-    userEmail = "duktus@duck.com";
-	extraConfig = {
 	  init = {
 	    defaultBranch = "main";
           };
+
           core = {
             editor = "nvim";
           };
+
+	  color = {
+	    ui = true;
+	  };
+
         };
      };
 
-  home.packages = with pkgs; [
-    # pkgs to install
-    tmux
-    neovim
-    
-    tree
-    tig
-    ripgrep
-    jq
-    fzf
-    exa
-    bat
-    fd
-    gotop
-    mc
-    podman-unwrapped
-    podman-compose
+    dircolors = {
+      enable = true;
+    };
 
-    ffmpeg_5-full 
-    unzip
-    p7zip
-    python310Packages.pipx
-  ];
+    direnv = {
+      enable = true;
+    };
 
-  home.stateVersion = "22.05";
-  programs.home-manager.enable = true;
+    bat = {
+      enable = true;
+      config = {
+        theme = "Solarized (dark)";
+      };
+    };
+
+  };
 }
